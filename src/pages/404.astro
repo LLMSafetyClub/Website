@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../site';
+---
+
+<Base title="Page not found">
+  <div class="wrap">
+    <header class="page-head">
+      <h1>Page not found</h1>
+      <p class="lede">
+        This address does not match any page. It may have moved, or the link may be wrong.
+      </p>
+      <div class="actions">
+        <a class="button" href={url('/')}>Go to the home page</a>
+        <a href={url('/events/')}>See events</a>
+      </div>
+    </header>
+  </div>
+</Base>

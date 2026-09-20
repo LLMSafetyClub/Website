@@ -1,0 +1,48 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventRow from '../../components/EventRow.astro';
+import { site, url } from '../../site';
+import { getEvents } from '../../content';
+
+const { upcoming, past } = await getEvents();
+---
+
+<Base title="Events" description={`Meetings, workshops, talks, and reading groups from the ${site.name}.`}>
+  <div class="wrap">
+    <header class="page-head">
+      <h1>Events</h1>
+      <p class="lede">
+        Meetings, hands-on workshops, talks, and reading groups. Everything is open to all Georgia
+        State students unless the listing says otherwise.
+      </p>
+    </header>
+
+    <section aria-labelledby="upcoming">
+      <div class="section-head">
+        <h2 id="upcoming">Upcoming</h2>
+      </div>
+      {
+        upcoming.length > 0 ? (
+          <ul class="rows">{upcoming.map((event) => <EventRow event={event} />)}</ul>
+        ) : (
+          <p class="empty">
+            Nothing is scheduled right now. <a href={url('/join/')}>Join the club</a> to hear when
+            the next event is posted.
+          </p>
+        )
+      }
+    </section>
+
+    {
+      past.length > 0 && (
+        <section class="section" aria-labelledby="past">
+          <div class="section-head">
+            <h2 id="past">Past</h2>
+            <a href={url('/materials/')}>Slides and materials</a>
+          </div>
+          <ul class="rows">{past.map((event) => <EventRow event={event} />)}</ul>
+        </section>
+      )
+    }
+  </div>
+</Base>

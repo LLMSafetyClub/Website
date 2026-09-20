@@ -1,0 +1,89 @@
+---
+import Base from '../layouts/Base.astro';
+import TokenHero from '../components/TokenHero.astro';
+import EventRow from '../components/EventRow.astro';
+import PostRow from '../components/PostRow.astro';
+import AnnouncementRow from '../components/AnnouncementRow.astro';
+import { site, url } from '../site';
+import { getEvents, getPosts, getAnnouncements } from '../content';
+
+const { upcoming } = await getEvents();
+const posts = await getPosts();
+const announcements = await getAnnouncements();
+---
+
+<Base>
+  <div class="wrap">
+    <section class="hero">
+      <TokenHero />
+      <p class="lede">
+        We are students at {site.school} who read the research, run the experiments, and open up
+        language models to see how they work. No experience needed, only curiosity.
+      </p>
+      <div class="actions">
+        <a class="button" href={url('/join/')}>Join the club</a>
+        <a href={url('/events/')}>See upcoming events</a>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="next-up">
+      <div class="section-head">
+        <h2 id="next-up">Next up</h2>
+        <a href={url('/events/')}>All events</a>
+      </div>
+      {
+        upcoming.length > 0 ? (
+          <ul class="rows">
+            {upcoming.slice(0, 3).map((event) => <EventRow event={event} />)}
+          </ul>
+        ) : (
+          <p class="empty">
+            Nothing is scheduled right now. <a href={url('/join/')}>Join the club</a> to hear when
+            the next event is posted.
+          </p>
+        )
+      }
+    </section>
+
+    {
+      announcements.length > 0 && (
+        <section class="section" aria-labelledby="announcements">
+          <div class="section-head">
+            <h2 id="announcements">Announcements</h2>
+            <a href={url('/announcements/')}>All announcements</a>
+          </div>
+          <ul class="rows">
+            {announcements.slice(0, 3).map((announcement) => (
+              <AnnouncementRow announcement={announcement} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      posts.length > 0 && (
+        <section class="section" aria-labelledby="from-the-blog">
+          <div class="section-head">
+            <h2 id="from-the-blog">From the blog</h2>
+            <a href={url('/blog/')}>All posts</a>
+          </div>
+          <ul class="rows">
+            {posts.slice(0, 3).map((post) => <PostRow post={post} />)}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .hero {
+    padding-block: clamp(3rem, 9vw, 6.5rem) clamp(1rem, 3vw, 2rem);
+  }
+
+  .hero .lede {
+    margin-top: 2.25rem;
+    color: var(--ink);
+  }
+</style>

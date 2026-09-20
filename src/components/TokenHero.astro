@@ -1,0 +1,126 @@
+---
+// The headline, split the way a tokenizer would split it. Each token is shaded
+// by how much the selected token attends to it, like an attention pattern
+// viewer. The weights are hand-written for illustration, not model output.
+const tokens = ['What', ' is', ' the', ' model', ' doing', ' when', ' it', ' writes', ' the', ' next', ' word', '?'];
+
+// links[i] lists the earlier tokens that token i attends to most, with a weight.
+const links: Record<number, [number, number][]> = {
+  3: [[2, 0.5]],
+  4: [[3, 0.9], [1, 0.5]],
+  5: [[4, 0.6]],
+  6: [[3, 1]],
+  7: [[6, 0.8], [3, 0.6]],
+  9: [[7, 0.5]],
+  10: [[9, 0.9], [7, 0.7]],
+  11: [[0, 0.9], [4, 0.6], [10, 0.5]],
+};
+
+const sentence = tokens.join('');
+---
+
+<div class="token-hero">
+  <h1 aria-label={sentence} data-links={JSON.stringify(links)}>
+    {
+      tokens.map((token, i) => (
+        <>
+          {token.startsWith(' ') && ' '}
+          <span class="tok" aria-hidden="true" data-i={i}>{token.trim()}</span>
+        </>
+      ))
+    }
+  </h1>
+  <p class="label token-note" aria-hidden="true">
+    <span data-readout>Point at a token to see what it attends to</span>
+    <span>Illustrative weights</span>
+  </p>
+</div>
+
+<style>
+  .token-hero h1 {
+    font-size: clamp(2.35rem, 7.2vw, 5.25rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.32;
+    max-width: 17ch;
+    text-wrap: initial;
+  }
+
+  .tok {
+    --w: 0;
+    background: color-mix(in srgb, var(--blue) calc(var(--w) * 1%), var(--paper));
+    padding: 0.02em 0.12em;
+    margin-inline: -0.06em;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+    cursor: default;
+  }
+
+  .tok.is-future {
+    color: color-mix(in srgb, var(--ink) 28%, var(--paper));
+  }
+
+  .tok.is-query {
+    box-shadow: inset 0 -0.07em 0 var(--ink);
+  }
+
+  .token-note {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 2rem;
+    margin-top: 1.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--rule);
+    max-width: 44rem;
+  }
+</style>
+
+<script>
+  const heading = document.querySelector<HTMLElement>('.token-hero h1');
+  const readout = document.querySelector<HTMLElement>('[data-readout]');
+
+  if (heading && readout) {
+    const toks = [...heading.querySelectorAll<HTMLElement>('.tok')];
+    const links: Record<string, [number, number][]> = JSON.parse(heading.dataset.links ?? '{}');
+    const idle = readout.textContent ?? '';
+
+    // Row i of a causal attention pattern: a sink on the first token, some
+    // weight on the previous token and on itself, plus the hand-written links.
+    const row = (i: number) => {
+      const weights = new Array(toks.length).fill(0);
+      weights[0] = 0.35;
+      if (i > 0) weights[i - 1] = Math.max(weights[i - 1], 0.3);
+      weights[i] = Math.max(weights[i], 0.25);
+      for (const [j, w] of links[i] ?? []) weights[j] = Math.max(weights[j], w);
+      return weights;
+    };
+
+    const show = (i: number, label: string) => {
+      const weights = row(i);
+      toks.forEach((tok, j) => {
+        tok.style.setProperty('--w', j <= i ? String(Math.round(weights[j] * 46)) : '0');
+        tok.classList.toggle('is-future', j > i);
+        tok.classList.toggle('is-query', j === i);
+      });
+      readout.textContent = label;
+    };
+
+    const reset = () => {
+      show(toks.length - 1, idle);
+      toks.forEach((tok) => tok.classList.remove('is-query'));
+    };
+
+    toks.forEach((tok, i) => {
+      const label = `Attention from "${tok.textContent}" at position ${i}`;
+      tok.addEventListener('pointerenter', () => show(i, label));
+      tok.addEventListener('click', () => show(i, label));
+    });
+    heading.addEventListener('pointerleave', reset);
+
+    reset();
+  }
+</script>

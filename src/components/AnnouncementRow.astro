@@ -1,0 +1,28 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { formatDate, isoDate } from '../site';
+
+interface Props {
+  announcement: CollectionEntry<'announcements'>;
+}
+
+const { announcement } = Astro.props;
+const { Content } = await render(announcement);
+---
+
+<li class="row" id={announcement.id}>
+  <div class="row-when">
+    <time class="label" datetime={isoDate(announcement.data.date)}>{formatDate(announcement.data.date)}</time>
+  </div>
+  <div class="row-body">
+    <h3>{announcement.data.title}</h3>
+    <div class="prose"><Content /></div>
+  </div>
+</li>
+
+<style>
+  .prose {
+    margin-top: 0.5rem;
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import AnnouncementRow from '../components/AnnouncementRow.astro';
+import { getAnnouncements } from '../content';
+
+const announcements = await getAnnouncements();
+---
+
+<Base title="Announcements" description="News and updates from the club.">
+  <div class="wrap">
+    <header class="page-head">
+      <h1>Announcements</h1>
+    </header>
+
+    <hr class="rule" />
+    {
+      announcements.length > 0 ? (
+        <ul class="rows">
+          {announcements.map((announcement) => <AnnouncementRow announcement={announcement} />)}
+        </ul>
+      ) : (
+        <p class="empty">No announcements yet.</p>
+      )
+    }
+  </div>
+</Base>
