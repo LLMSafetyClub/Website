@@ -9,7 +9,7 @@ Needs Node 22.12 or newer (`nvm use` picks up `.nvmrc`).
 
 ```sh
 npm install
-npm run dev      # http://localhost:4321/Website/
+npm run dev      # http://localhost:4321/
 npm run build    # writes the static site to dist/
 ```
 
