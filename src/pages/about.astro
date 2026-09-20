@@ -1,59 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import { site, url } from '../site';
+import PageIntro from '../components/PageIntro.astro';
 ---
 
-<Base title="About" description={site.description}>
+<Base title="About">
   <div class="wrap">
-    <header class="page-head">
-      <h1>About the club</h1>
-      <p class="lede">
-        Placeholder: one or two sentences on why the club exists and who it is for.
-      </p>
-    </header>
-
-    <div class="prose">
-      <h2>What we work on</h2>
-      <p>
-        Placeholder. Language models are trained, not programmed, so nobody writes down how they
-        reach an answer. Interpretability is the work of finding out: locating the features and
-        circuits inside a network and testing what they do. Safety asks what could go wrong as
-        these systems become more capable, and what it takes to prevent it.
-      </p>
-
-      <h2>What we do</h2>
-      <ul>
-        <li>
-          <strong>Reading groups.</strong> Placeholder: we pick a paper, read it ahead of time, and
-          work through it together.
-        </li>
-        <li>
-          <strong>Workshops.</strong> Placeholder: hands-on sessions with real models, such as
-          probing activations, logit lens, and activation patching.
-        </li>
-        <li>
-          <strong>Talks.</strong> Placeholder: members and guests present research and projects.
-        </li>
-        <li>
-          <strong>Projects.</strong> Placeholder: small teams replicate a result or try a new idea
-          over a semester.
-        </li>
-      </ul>
-
-      <h2>Who it is for</h2>
-      <p>
-        Placeholder. Any Georgia State student. Computer science, math, neuroscience, philosophy,
-        and policy all have something to add. You do not need to have trained a model before.
-      </p>
-
-      <h2>People</h2>
-      <p>Placeholder: officers and faculty advisor, with a line about each.</p>
-
-      <h2>Contact</h2>
-      <p>
-        Email <a href={`mailto:${site.email}`}>{site.email}</a>, or see
-        <a href={url('/join/')}>how to join</a>.
-      </p>
-    </div>
+    <PageIntro page="about" fallbackTitle="About" />
   </div>
 </Base>

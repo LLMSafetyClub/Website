@@ -1,0 +1,7 @@
+{
+  "types": {
+    "date": "datetime",
+    "draft": "checkbox",
+    "links": "multitext"
+  }
+}

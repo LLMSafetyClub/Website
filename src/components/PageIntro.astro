@@ -1,0 +1,26 @@
+---
+// The heading and body of a note in content/pages/. The body is whatever was written in Obsidian.
+import { render } from 'astro:content';
+import { getPage } from '../content';
+
+interface Props {
+  page: string;
+  fallbackTitle: string;
+}
+
+const { page, fallbackTitle } = Astro.props;
+const entry = await getPage(page);
+const title = entry?.data.title ?? fallbackTitle;
+const Content = entry?.body?.trim() ? (await render(entry)).Content : undefined;
+---
+
+<header class="page-head">
+  <h1>{title}</h1>
+  {Content && <div class="prose intro"><Content /></div>}
+</header>
+
+<style>
+  .intro {
+    margin-top: 1.5rem;
+  }
+</style>

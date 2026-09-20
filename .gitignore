@@ -15,3 +15,8 @@ npm-debug.log*
 # macOS / editors
 .DS_Store
 .idea/
+
+# Obsidian: keep shared settings, ignore per-machine state
+content/.obsidian/workspace*.json
+content/.obsidian/cache
+content/.trash/

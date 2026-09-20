@@ -1,12 +1,15 @@
 ---
+import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import TokenHero from '../components/TokenHero.astro';
 import EventRow from '../components/EventRow.astro';
 import PostRow from '../components/PostRow.astro';
 import AnnouncementRow from '../components/AnnouncementRow.astro';
-import { site, url } from '../site';
-import { getEvents, getPosts, getAnnouncements } from '../content';
+import { url } from '../site';
+import { getClub, getPage, getEvents, getPosts, getAnnouncements } from '../content';
 
+const club = await getClub();
+const home = await getPage('home');
+const Intro = home?.body?.trim() ? (await render(home)).Content : undefined;
 const { upcoming } = await getEvents();
 const posts = await getPosts();
 const announcements = await getAnnouncements();
@@ -15,20 +18,17 @@ const announcements = await getAnnouncements();
 <Base>
   <div class="wrap">
     <section class="hero">
-      <TokenHero />
-      <p class="lede">
-        We are students at {site.school} who read the research, run the experiments, and open up
-        language models to see how they work. No experience needed, only curiosity.
-      </p>
+      <h1>{home?.data.title ?? club.name}</h1>
+      {Intro && <div class="prose intro"><Intro /></div>}
       <div class="actions">
-        <a class="button" href={url('/join/')}>Join the club</a>
-        <a href={url('/events/')}>See upcoming events</a>
+        <a class="button" href={url('/join/')}>Join</a>
+        <a href={url('/events/')}>Events</a>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="next-up">
+    <section class="section" aria-labelledby="upcoming">
       <div class="section-head">
-        <h2 id="next-up">Next up</h2>
+        <h2 id="upcoming">Upcoming events</h2>
         <a href={url('/events/')}>All events</a>
       </div>
       {
@@ -37,10 +37,7 @@ const announcements = await getAnnouncements();
             {upcoming.slice(0, 3).map((event) => <EventRow event={event} />)}
           </ul>
         ) : (
-          <p class="empty">
-            Nothing is scheduled right now. <a href={url('/join/')}>Join the club</a> to hear when
-            the next event is posted.
-          </p>
+          <p class="empty">No upcoming events.</p>
         )
       }
     </section>
@@ -63,9 +60,9 @@ const announcements = await getAnnouncements();
 
     {
       posts.length > 0 && (
-        <section class="section" aria-labelledby="from-the-blog">
+        <section class="section" aria-labelledby="blog">
           <div class="section-head">
-            <h2 id="from-the-blog">From the blog</h2>
+            <h2 id="blog">Blog</h2>
             <a href={url('/blog/')}>All posts</a>
           </div>
           <ul class="rows">
@@ -82,8 +79,16 @@ const announcements = await getAnnouncements();
     padding-block: clamp(3rem, 9vw, 6.5rem) clamp(1rem, 3vw, 2rem);
   }
 
-  .hero .lede {
+  .hero h1 {
+    font-size: clamp(2.5rem, 7.2vw, 5.25rem);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    max-width: 14ch;
+  }
+
+  .intro {
     margin-top: 2.25rem;
-    color: var(--ink);
+    font-size: clamp(1.125rem, 2vw, 1.3125rem);
+    line-height: 1.5;
   }
 </style>

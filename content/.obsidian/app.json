@@ -1,0 +1,8 @@
+{
+  "useMarkdownLinks": false,
+  "newLinkFormat": "shortest",
+  "attachmentFolderPath": "attachments",
+  "newFileLocation": "current",
+  "propertiesInDocument": "visible",
+  "userIgnoreFilters": ["_templates/"]
+}

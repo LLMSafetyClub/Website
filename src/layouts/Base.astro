@@ -2,22 +2,18 @@
 import '@fontsource-variable/schibsted-grotesk';
 import '@fontsource-variable/martian-mono';
 import '../styles/global.css';
-import { site, nav, url } from '../site';
+import { nav, url } from '../site';
+import { getClub } from '../content';
 
 interface Props {
   title?: string;
   description?: string;
 }
 
-const { title, description = site.description } = Astro.props;
-const pageTitle = title ? `${title} | ${site.shortName} at GSU` : `${site.name} at Georgia State`;
+const club = await getClub();
+const { title, description = club.description } = Astro.props;
+const pageTitle = title ? `${title} | ${club.shortName ?? club.name}` : club.name;
 const current = Astro.url.pathname;
-const footerLinks = [
-  { label: 'Discord', href: site.links.discord },
-  { label: 'Mailing list', href: site.links.mailingList },
-  { label: 'PIN', href: site.links.pin },
-  { label: 'GitHub', href: site.links.github },
-].filter((link) => link.href);
 ---
 
 <!doctype html>
@@ -26,9 +22,9 @@ const footerLinks = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
-    <meta name="description" content={description} />
+    {description && <meta name="description" content={description} />}
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
+    {description && <meta property="og:description" content={description} />}
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
@@ -38,8 +34,8 @@ const footerLinks = [
     <header class="site-header">
       <div class="wrap">
         <a class="brand" href={url('/')}>
-          <span class="brand-mark">{site.shortName}</span>
-          <span>{site.name}</span>
+          {club.shortName && <span class="brand-mark">{club.shortName}</span>}
+          <span>{club.name}</span>
         </a>
         <nav class="site-nav" aria-label="Main">
           {
@@ -63,12 +59,12 @@ const footerLinks = [
     <footer class="site-footer">
       <div class="wrap">
         <p>
-          {site.name}<br />
-          A student club at {site.school}, Atlanta
+          {club.name}
+          {club.school && <Fragment><br />{club.school}</Fragment>}
         </p>
         <ul>
-          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
-          {footerLinks.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+          {club.email && <li><a href={`mailto:${club.email}`}>{club.email}</a></li>}
+          {club.channels.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
         </ul>
       </div>
     </footer>

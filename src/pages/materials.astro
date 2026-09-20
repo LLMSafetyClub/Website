@@ -1,46 +1,40 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
 import { url, formatDay, isoDay } from '../site';
-import { getEvents } from '../content';
+import { getEvents, titleOf, eventLinks } from '../content';
 
 const { upcoming, past } = await getEvents();
-const withMaterials = [...upcoming.reverse(), ...past].filter(
-  (event) => event.data.slides || event.data.materials.length > 0,
-);
+const withMaterials = [...upcoming.reverse(), ...past]
+  .map((event) => ({ event, links: eventLinks(event) }))
+  .filter(({ links }) => links.length > 0);
 ---
 
-<Base title="Materials" description="Slides, notebooks, and recordings from past club events.">
+<Base title="Materials">
   <div class="wrap">
-    <header class="page-head">
-      <h1>Materials</h1>
-      <p class="lede">
-        Slides, notebooks, and recordings from our events, newest first. Reuse them freely, and
-        tell us if you find a mistake.
-      </p>
-    </header>
+    <PageIntro page="materials" fallbackTitle="Materials" />
 
     <hr class="rule" />
     {
       withMaterials.length > 0 ? (
         <ul class="rows">
-          {withMaterials.map((event) => (
+          {withMaterials.map(({ event, links }) => (
             <li class="row">
               <div class="row-when">
                 <time class="label" datetime={isoDay(event.data.date)}>{formatDay(event.data.date)}</time>
-                <span class="label">{event.data.kind}</span>
+                {event.data.kind && <span class="label">{event.data.kind}</span>}
               </div>
               <div class="row-body">
-                <h3><a href={url(`/events/${event.id}/`)}>{event.data.title}</a></h3>
+                <h3><a href={url(`/events/${event.id}/`)}>{titleOf(event)}</a></h3>
                 <div class="row-links">
-                  {event.data.slides && <a href={url(event.data.slides)}>Slides</a>}
-                  {event.data.materials.map((item) => <a href={url(item.href)}>{item.label}</a>)}
+                  {links.map((link) => <a href={url(link.href)}>{link.label}</a>)}
                 </div>
               </div>
             </li>
           ))}
         </ul>
       ) : (
-        <p class="empty">Nothing here yet. Slides appear after each event.</p>
+        <p class="empty">No materials yet.</p>
       )
     }
   </div>

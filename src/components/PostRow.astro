@@ -1,21 +1,23 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { url, formatDate, isoDate } from '../site';
+import { url, formatDay, isoDay } from '../site';
+import { titleOf } from '../content';
 
 interface Props {
   post: CollectionEntry<'posts'>;
 }
 
 const { post } = Astro.props;
+const { date, author, summary } = post.data;
 ---
 
 <li class="row">
   <div class="row-when">
-    <time class="label" datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
-    <span class="label">{post.data.author}</span>
+    <time class="label" datetime={isoDay(date)}>{formatDay(date)}</time>
+    {author && <span class="label">{author}</span>}
   </div>
   <div class="row-body">
-    <h3><a href={url(`/blog/${post.id}/`)}>{post.data.title}</a></h3>
-    <p>{post.data.summary}</p>
+    <h3><a href={url(`/blog/${post.id}/`)}>{titleOf(post)}</a></h3>
+    {summary && <p>{summary}</p>}
   </div>
 </li>

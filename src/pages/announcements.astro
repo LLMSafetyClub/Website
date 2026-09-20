@@ -1,16 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
 import AnnouncementRow from '../components/AnnouncementRow.astro';
 import { getAnnouncements } from '../content';
 
 const announcements = await getAnnouncements();
 ---
 
-<Base title="Announcements" description="News and updates from the club.">
+<Base title="Announcements">
   <div class="wrap">
-    <header class="page-head">
-      <h1>Announcements</h1>
-    </header>
+    <PageIntro page="announcements" fallbackTitle="Announcements" />
 
     <hr class="rule" />
     {

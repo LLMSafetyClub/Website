@@ -1,6 +1,7 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
-import { formatDate, isoDate } from '../site';
+import { formatDay, isoDay } from '../site';
+import { titleOf } from '../content';
 
 interface Props {
   announcement: CollectionEntry<'announcements'>;
@@ -12,10 +13,10 @@ const { Content } = await render(announcement);
 
 <li class="row" id={announcement.id}>
   <div class="row-when">
-    <time class="label" datetime={isoDate(announcement.data.date)}>{formatDate(announcement.data.date)}</time>
+    <time class="label" datetime={isoDay(announcement.data.date)}>{formatDay(announcement.data.date)}</time>
   </div>
   <div class="row-body">
-    <h3>{announcement.data.title}</h3>
+    <h3>{titleOf(announcement)}</h3>
     <div class="prose"><Content /></div>
   </div>
 </li>

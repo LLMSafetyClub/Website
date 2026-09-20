@@ -1,30 +1,33 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { url, formatDay, formatTime, isoDay } from '../site';
+import { titleOf, eventLinks } from '../content';
 
 interface Props {
   event: CollectionEntry<'events'>;
 }
 
 const { event } = Astro.props;
-const { title, kind, date, location, summary, speaker, slides, materials } = event.data;
+const { kind, date, location, summary, speaker } = event.data;
+const time = formatTime(date);
+const where = [location, speaker].filter(Boolean).join(', ');
+const links = eventLinks(event);
 ---
 
 <li class="row">
   <div class="row-when">
     <time class="label" datetime={isoDay(date)}>{formatDay(date)}</time>
-    <span class="label">{formatTime(date)}</span>
-    <span class="label">{kind}</span>
+    {time && <span class="label">{time}</span>}
+    {kind && <span class="label">{kind}</span>}
   </div>
   <div class="row-body">
-    <h3><a href={url(`/events/${event.id}/`)}>{title}</a></h3>
-    <p class="row-meta">{location}{speaker && `, with ${speaker}`}</p>
-    <p>{summary}</p>
+    <h3><a href={url(`/events/${event.id}/`)}>{titleOf(event)}</a></h3>
+    {where && <p class="row-meta">{where}</p>}
+    {summary && <p>{summary}</p>}
     {
-      (slides || materials.length > 0) && (
+      links.length > 0 && (
         <div class="row-links">
-          {slides && <a href={url(slides)}>Slides</a>}
-          {materials.map((item) => <a href={url(item.href)}>{item.label}</a>)}
+          {links.map((link) => <a href={url(link.href)}>{link.label}</a>)}
         </div>
       )
     }

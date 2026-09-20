@@ -1,27 +1,22 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
 import PostRow from '../../components/PostRow.astro';
-import { site } from '../../site';
 import { getPosts } from '../../content';
 
 const posts = await getPosts();
 ---
 
-<Base title="Blog" description={`Paper notes, experiment write-ups, and explainers from members of the ${site.name}.`}>
+<Base title="Blog">
   <div class="wrap">
-    <header class="page-head">
-      <h1>Blog</h1>
-      <p class="lede">
-        Paper notes, experiment write-ups, and explainers written by club members.
-      </p>
-    </header>
+    <PageIntro page="blog" fallbackTitle="Blog" />
 
     <hr class="rule" />
     {
       posts.length > 0 ? (
         <ul class="rows">{posts.map((post) => <PostRow post={post} />)}</ul>
       ) : (
-        <p class="empty">No posts yet. The first one is on its way.</p>
+        <p class="empty">No posts yet.</p>
       )
     }
   </div>

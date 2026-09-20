@@ -1,61 +1,33 @@
 ---
 import Base from '../layouts/Base.astro';
-import { site, url } from '../site';
+import PageIntro from '../components/PageIntro.astro';
+import { getClub } from '../content';
 
-const channels = [
-  { label: 'Discord', href: site.links.discord, note: 'Day-to-day chat, paper links, and help with code.' },
-  { label: 'Mailing list', href: site.links.mailingList, note: 'One email before each event. Nothing else.' },
-  { label: 'PIN', href: site.links.pin, note: 'Our page on the Panther Involvement Network.' },
-].filter((channel) => channel.href);
+const club = await getClub();
+const hasFacts = club.meeting || club.email || club.channels.length > 0;
 ---
 
-<Base title="Join" description={`How to join the ${site.name} at ${site.school}.`}>
+<Base title="Join">
   <div class="wrap">
-    <header class="page-head">
-      <h1>Join</h1>
-      <p class="lede">
-        There are no dues and no application. Come to a meeting, and you are a member.
-      </p>
-    </header>
+    <PageIntro page="join" fallbackTitle="Join" />
 
-    <dl class="facts">
-      <dt class="label">Meetings</dt>
-      <dd>{site.meeting}</dd>
-      <dt class="label">Email</dt>
-      <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
-      {
-        channels.map((channel) => (
-          <>
-            <dt class="label">{channel.label}</dt>
-            <dd>
-              <a href={channel.href}>Open {channel.label}</a>
-              <br />
-              {channel.note}
-            </dd>
-          </>
-        ))
-      }
-    </dl>
-
-    <div class="prose after-facts">
-      <h2>Before your first meeting</h2>
-      <p>
-        Placeholder. You do not need to prepare anything. If you want a head start, check the
-        <a href={url('/events/')}>next event</a> for a reading, or browse the
-        <a href={url('/materials/')}>slides from past sessions</a>.
-      </p>
-
-      <h2>Want to present or run a workshop?</h2>
-      <p>
-        Placeholder. Members present at most meetings. Email us with a paper or a project you want
-        to talk about, and we will find a date.
-      </p>
-    </div>
+    {
+      hasFacts && (
+        <dl class="facts">
+          {club.meeting && <dt class="label">Meetings</dt>}
+          {club.meeting && <dd>{club.meeting}</dd>}
+          {club.email && <dt class="label">Email</dt>}
+          {club.email && <dd><a href={`mailto:${club.email}`}>{club.email}</a></dd>}
+          {
+            club.channels.map((channel) => (
+              <>
+                <dt class="label">{channel.label}</dt>
+                <dd><a href={channel.href}>{channel.href.replace(/^https?:\/\//, '')}</a></dd>
+              </>
+            ))
+          }
+        </dl>
+      )
+    }
   </div>
 </Base>
-
-<style>
-  .after-facts {
-    margin-top: 1rem;
-  }
-</style>

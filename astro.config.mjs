@@ -1,13 +1,18 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import remarkObsidian from './src/remark-obsidian.mjs';
 
-// Set this to the club's custom domain (e.g. 'llmsafetyclub.org') once DNS is
-// pointed at GitHub Pages, and put the same value in public/CNAME.
-// While it is empty the site is served from the default GitHub Pages URL.
+// The club's custom domain. The same value is in public/CNAME.
+// If this is ever emptied, the site falls back to the default GitHub Pages URL.
 const CUSTOM_DOMAIN = 'llmsafetyclub.org';
 
-export default defineConfig(
-  CUSTOM_DOMAIN
-    ? { site: `https://${CUSTOM_DOMAIN}` }
-    : { site: 'https://llmsafetyclub.github.io', base: '/Website' },
-);
+const location = CUSTOM_DOMAIN
+  ? { site: `https://${CUSTOM_DOMAIN}`, base: '/' }
+  : { site: 'https://llmsafetyclub.github.io', base: '/Website' };
+
+export default defineConfig({
+  ...location,
+  markdown: {
+    remarkPlugins: [[remarkObsidian, { contentDir: 'content', base: location.base }]],
+  },
+});

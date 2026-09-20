@@ -1,21 +1,3 @@
-// Club-wide details. Edit these once and every page picks them up.
-export const site = {
-  name: 'LLM Safety & Interpretability Club',
-  shortName: 'LSIC',
-  school: 'Georgia State University',
-  description:
-    'A student club at Georgia State University for people who want to understand how large language models work inside, and how to make them safe.',
-  email: 'placeholder@student.gsu.edu',
-  // Leave a link empty to hide it.
-  links: {
-    discord: '',
-    mailingList: '',
-    pin: '',
-    github: 'https://github.com/LLMSafetyClub',
-  },
-  meeting: 'Placeholder: Thursdays, 5:30 pm, room to be announced',
-};
-
 export const nav = [
   { label: 'Events', path: '/events/' },
   { label: 'Blog', path: '/blog/' },
@@ -32,20 +14,10 @@ export function url(path: string): string {
   return `${base}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
-const TZ = 'America/New_York';
+// Content dates hold Atlanta wall-clock time in their UTC fields (see content.config.ts),
+// so they are always formatted as UTC.
 
 export function formatDay(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    timeZone: TZ,
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
-/** For posts and announcements, whose dates have no time and parse as UTC midnight. */
-export function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
     timeZone: 'UTC',
     weekday: 'short',
@@ -55,14 +27,17 @@ export function formatDate(date: Date): string {
   });
 }
 
-export function isoDate(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
+/** Empty when the note gave a date with no time. */
 export function formatTime(date: Date): string {
-  return date.toLocaleTimeString('en-US', { timeZone: TZ, hour: 'numeric', minute: '2-digit' });
+  if (date.getUTCHours() === 0 && date.getUTCMinutes() === 0) return '';
+  return date.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: 'numeric', minute: '2-digit' });
 }
 
 export function isoDay(date: Date): string {
-  return date.toLocaleDateString('en-CA', { timeZone: TZ });
+  return date.toISOString().slice(0, 10);
+}
+
+/** Today's date in Atlanta, as 2026-10-15. */
+export function today(): string {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
 }

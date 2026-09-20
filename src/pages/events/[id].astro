@@ -1,39 +1,42 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url, formatDay, formatTime, isoDay } from '../../site';
+import { getEvents, titleOf, eventLinks } from '../../content';
 
 export async function getStaticPaths() {
-  const events = await getCollection('events');
-  return events.map((event) => ({ params: { id: event.id }, props: { event } }));
+  const { upcoming, past } = await getEvents();
+  return [...upcoming, ...past].map((event) => ({ params: { id: event.id }, props: { event } }));
 }
 
 const { event } = Astro.props;
-const { title, kind, date, location, summary, speaker, slides, materials } = event.data;
+const { kind, date, location, summary, speaker } = event.data;
+const title = titleOf(event);
+const time = formatTime(date);
+const links = eventLinks(event);
 const { Content } = await render(event);
 ---
 
 <Base title={title} description={summary}>
   <article class="wrap">
     <header class="page-head">
-      <p class="label">{kind}</p>
+      {kind && <p class="label">{kind}</p>}
       <h1>{title}</h1>
-      <p class="lede">{summary}</p>
+      {summary && <p class="lede">{summary}</p>}
     </header>
 
     <dl class="facts">
       <dt class="label">When</dt>
-      <dd><time datetime={isoDay(date)}>{formatDay(date)}, {formatTime(date)}</time></dd>
-      <dt class="label">Where</dt>
-      <dd>{location}</dd>
+      <dd><time datetime={isoDay(date)}>{formatDay(date)}{time && `, ${time}`}</time></dd>
+      {location && <dt class="label">Where</dt>}
+      {location && <dd>{location}</dd>}
       {speaker && <dt class="label">Speaker</dt>}
       {speaker && <dd>{speaker}</dd>}
-      {(slides || materials.length > 0) && <dt class="label">Materials</dt>}
+      {links.length > 0 && <dt class="label">Materials</dt>}
       {
-        (slides || materials.length > 0) && (
+        links.length > 0 && (
           <dd class="fact-links">
-            {slides && <a href={url(slides)}>Slides</a>}
-            {materials.map((item) => <a href={url(item.href)}>{item.label}</a>)}
+            {links.map((link) => <a href={url(link.href)}>{link.label}</a>)}
           </dd>
         )
       }
