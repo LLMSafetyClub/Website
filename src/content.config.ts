@@ -15,17 +15,19 @@ const flag = z
   .transform((value) => value ?? false);
 
 // Dates are wall-clock Atlanta time with no time zone: 2026-10-15T17:30 or 2026-10-15.
-// They are kept as a Date whose UTC fields hold that wall-clock time.
-const wallClock = z.union([z.string(), z.date()]).transform((value, ctx) => {
-  if (value instanceof Date) return value;
-  const match = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{1,2}):(\d{2}))?/);
-  if (!match) {
-    ctx.addIssue({ code: 'custom', message: 'Write dates as 2026-10-15 or 2026-10-15T17:30' });
-    return z.NEVER;
-  }
-  const [, y, m, d, hh = '0', mm = '0'] = match;
-  return new Date(Date.UTC(+y, +m - 1, +d, +hh, +mm));
-});
+// They are kept as a Date whose UTC fields hold that wall-clock time. A missing or
+// unreadable date becomes undefined, and the note is left off the site (see src/content.ts)
+// instead of failing the whole build.
+const wallClock = z
+  .union([z.string(), z.date()])
+  .nullish()
+  .transform((value) => {
+    if (value instanceof Date) return value;
+    const match = value?.trim().match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{1,2}):(\d{2}))?/);
+    if (!match) return undefined;
+    const [, y, m, d, hh = '0', mm = '0'] = match;
+    return new Date(Date.UTC(+y, +m - 1, +d, +hh, +mm));
+  });
 
 const events = defineCollection({
   loader: glob({ pattern: '*.md', base: './content/events' }),

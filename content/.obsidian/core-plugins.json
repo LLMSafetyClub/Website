@@ -5,7 +5,7 @@
   "backlink": true,
   "outgoing-link": true,
   "page-preview": true,
-  "templates": true,
+  "templates": false,
   "command-palette": true,
   "editor-status": true,
   "properties": true,

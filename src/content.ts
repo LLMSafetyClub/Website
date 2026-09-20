@@ -1,10 +1,19 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import { isoDay, today } from './site';
 
-type Dated = CollectionEntry<'events' | 'posts' | 'announcements'>;
+type Name = 'events' | 'posts' | 'announcements';
+/** An entry whose date was readable. Everything the pages receive is one of these. */
+export type Dated<C extends Name> = CollectionEntry<C> & { data: { date: Date } };
 
-const live = ({ data }: { data: { draft: boolean } }) => import.meta.env.DEV || !data.draft;
-const newestFirst = (a: Dated, b: Dated) => b.data.date.valueOf() - a.data.date.valueOf();
+/** Published notes, newest first. Drafts show only in `npm run dev`; notes without a usable date are skipped. */
+async function load<C extends Name>(name: C): Promise<Dated<C>[]> {
+  const entries = (await getCollection(name)) as CollectionEntry<Name>[];
+  const kept = entries.filter((entry) => {
+    if (!entry.data.date) console.warn(`[content] Skipping ${entry.filePath}: its date is missing or not like 2026-10-15T17:30`);
+    return entry.data.date && (import.meta.env.DEV || !entry.data.draft);
+  }) as Dated<C>[];
+  return kept.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+}
 
 /** The `title` property if the note has one, otherwise its file name, as in Obsidian. */
 export function titleOf(entry: { id: string; filePath?: string; data: { title?: string } }): string {
@@ -38,19 +47,19 @@ export async function getPage(id: string) {
 
 /** Events split around today (Atlanta time). An event stays upcoming through its own day. */
 export async function getEvents() {
-  const events = await getCollection('events', live);
+  const events = await load('events');
   const now = today();
-  const upcoming = events.filter((event) => isoDay(event.data.date) >= now).sort(newestFirst).reverse();
-  const past = events.filter((event) => isoDay(event.data.date) < now).sort(newestFirst);
+  const upcoming = events.filter((event) => isoDay(event.data.date) >= now).reverse();
+  const past = events.filter((event) => isoDay(event.data.date) < now);
   return { upcoming, past };
 }
 
 export async function getPosts() {
-  return (await getCollection('posts', live)).sort(newestFirst);
+  return load('posts');
 }
 
 export async function getAnnouncements() {
-  return (await getCollection('announcements', live)).sort(newestFirst);
+  return load('announcements');
 }
 
 // Files in the vault's attachments folder that an event can point to as slides.

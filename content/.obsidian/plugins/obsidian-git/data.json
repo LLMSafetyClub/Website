@@ -1,0 +1,13 @@
+{
+  "commitMessage": "Update site content ({{date}})",
+  "autoCommitMessage": "Update site content ({{date}})",
+  "commitDateFormat": "YYYY-MM-DD HH:mm",
+  "autoSaveInterval": 0,
+  "autoPushInterval": 0,
+  "autoPullInterval": 0,
+  "autoPullOnBoot": true,
+  "disablePush": false,
+  "pullBeforePush": true,
+  "syncMethod": "merge",
+  "showStatusBar": true
+}

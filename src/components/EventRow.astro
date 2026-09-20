@@ -1,10 +1,9 @@
 ---
-import type { CollectionEntry } from 'astro:content';
 import { url, formatDay, formatTime, isoDay } from '../site';
-import { titleOf, eventLinks } from '../content';
+import { titleOf, eventLinks, type Dated } from '../content';
 
 interface Props {
-  event: CollectionEntry<'events'>;
+  event: Dated<'events'>;
 }
 
 const { event } = Astro.props;

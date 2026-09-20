@@ -7,19 +7,27 @@ All the words on the site live in the `content/` folder, which is an Obsidian va
 
 ## Writing in Obsidian
 
-1. In Obsidian choose "Open folder as vault" and pick this repo's `content/` folder.
-   The Templates plugin, the template folder, and the attachments folder are already set up.
-2. To add something, make a new note in the right folder, then run "Templates: Insert template"
-   from the command palette (Ctrl/Cmd+P) and fill in the properties at the top.
-3. Commit and push. The site updates in a minute or two. The
-   [Obsidian Git](https://github.com/Vinzent03/obsidian-git) community plugin can do this from
-   inside Obsidian.
+The vault is this repo's `content/` folder. Use a copy of the repo on the normal Windows (or Mac)
+disk; Obsidian does not work well on a folder inside WSL.
 
-| To add | New note in | Template |
-| --- | --- | --- |
-| An event, workshop, or talk | `events/` | Event |
-| A blog post | `posts/` | Post |
-| An announcement | `announcements/` | Announcement |
+One-time setup:
+
+1. In Obsidian choose "Open folder as vault" and pick the `content` folder.
+2. When asked, choose "Trust author and enable plugins". The vault ships with two community
+   plugins, already configured: Templater (fills in new notes) and Git (publishes).
+3. Open Settings, Templater, and turn on "Trigger Templater on new file creation". Obsidian keeps
+   this switch per computer, so it cannot be set ahead of time.
+
+Adding something:
+
+1. Right-click the `events`, `posts`, or `announcements` folder and choose "New note".
+2. Answer the questions that pop up (title, and for events the date and kind). The note is named
+   and its properties are filled in for you.
+3. Fill in any other properties you want and write the body.
+4. Publish: open the command palette (Ctrl/Cmd+P) and run "Git: Commit-and-sync". The site
+   updates a minute or two later. The first time, a GitHub sign-in window appears.
+
+New posts start with `draft` ticked, so they stay off the live site until you untick it.
 
 The note's file name is its title on the site (add a `title` property to override it).
 
@@ -36,8 +44,8 @@ leaves the page with only its heading:
 
 ### Properties
 
-- `date`: `2026-10-15T17:30` for events, Atlanta time, no time zone needed. A plain `2026-10-15`
-  works where the time does not matter.
+- `date`: Atlanta time, no time zone needed. Use the date picker, or type `2026-10-15T17:30`.
+  A note whose date is missing or unreadable is left off the site.
 - `kind`: any word, such as meeting, workshop, talk, reading group.
 - `slides`: drop the PDF into the vault (it lands in `attachments/`), then set `slides` to its file
   name or `[[wikilink]]`. A full URL works too. Events with slides or links show up on Materials.
@@ -69,7 +77,7 @@ npm run build    # writes the static site to dist/
 
 ## Where things are
 
-- `content/`: the vault. `_templates/` and `.obsidian/` are not published.
+- `content/`: the vault. `_templates/` and `.obsidian/` (settings and the two plugins) are not published.
 - `src/pages/`, `src/components/`, `src/layouts/`: page structure. The only words here are
   interface labels (menu items, "Upcoming", "No upcoming events.", and so on).
 - `src/styles/global.css`: all styling.
