@@ -5,7 +5,7 @@ if (title && clean(title)) await tp.file.rename(clean(title));
 -%>
 ---
 date: <% tp.date.now("YYYY-MM-DD") %>T00:00
-author:
+authors:
 summary:
 draft: true
 ---

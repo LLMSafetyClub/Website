@@ -2,6 +2,8 @@
   "types": {
     "date": "datetime",
     "draft": "checkbox",
-    "links": "multitext"
+    "links": "multitext",
+    "speakers": "multitext",
+    "authors": "multitext"
   }
 }

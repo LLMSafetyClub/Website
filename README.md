@@ -47,8 +47,11 @@ leaves the page with only its heading:
 - `date`: Atlanta time, no time zone needed. Use the date picker, or type `2026-10-15T17:30`.
   A note whose date is missing or unreadable is left off the site.
 - `kind`: any word, such as meeting, workshop, talk, reading group.
+- `speakers` (events) and `authors` (posts): a list, one name per line. A single `speaker` or
+  `author` still works.
 - `slides`: drop the PDF into the vault (it lands in `attachments/`), then set `slides` to its file
-  name or `[[wikilink]]`. A full URL works too. Events with slides or links show up on Materials.
+  name or `[[wikilink]]`. A full URL works too. A PDF is shown in a viewer on the event page.
+  Events with slides or links show up on Materials.
 - `links`: a list, one per line, written as `Notebook: https://...` or a bare URL.
 - `draft`: tick it to keep a note off the live site. Drafts still show in `npm run dev`.
 - Any property can be left empty.
@@ -57,7 +60,9 @@ Events move from Upcoming to Past on their own, because the site rebuilds every 
 
 ### Obsidian syntax that works on the site
 
-- `![[image.png]]` image embeds (paste or drag an image into a note as usual)
+- `![[image.png]]` image embeds (paste a screenshot or drag an image into a note as usual)
+- `![[deck.pdf]]` shows the PDF in a viewer with a link under it; `[[deck.pdf]]` is a plain link.
+  Any file dropped into the vault can be linked this way.
 - `[[Note name]]` and `[[Note name|label]]` links to other events, posts, and pages
 - `> [!note] Title` callouts
 - `%%comments%%` are left out of the site

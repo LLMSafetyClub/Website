@@ -489,3 +489,18 @@ a:hover {
 .prose .callout-title {
   font-weight: 600;
 }
+
+/* An embedded PDF (![[deck.pdf]] in a note, or an event's slides) with a link under it. */
+
+.pdf-embed {
+  display: block;
+  margin-top: 0.75rem;
+}
+
+.pdf-embed iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--rule);
+  margin-bottom: 0.5rem;
+}

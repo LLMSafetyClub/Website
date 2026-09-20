@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url, formatDay, isoDay } from '../../site';
-import { getPosts, titleOf } from '../../content';
+import { getPosts, titleOf, people } from '../../content';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -10,7 +10,8 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { date, author, summary } = post.data;
+const { date, summary } = post.data;
+const author = people(post.data.authors, post.data.author);
 const title = titleOf(post);
 const { Content } = await render(post);
 ---

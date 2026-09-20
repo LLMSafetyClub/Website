@@ -1,15 +1,15 @@
 ---
 import { url, formatDay, formatTime, isoDay } from '../site';
-import { titleOf, eventLinks, type Dated } from '../content';
+import { titleOf, eventLinks, people, type Dated } from '../content';
 
 interface Props {
   event: Dated<'events'>;
 }
 
 const { event } = Astro.props;
-const { kind, date, location, summary, speaker } = event.data;
+const { kind, date, location, summary, speakers, speaker } = event.data;
 const time = formatTime(date);
-const where = [location, speaker].filter(Boolean).join(', ');
+const where = [location, people(speakers, speaker)].filter(Boolean).join(', ');
 const links = eventLinks(event);
 ---
 

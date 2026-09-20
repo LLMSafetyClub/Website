@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url, formatDay, formatTime, isoDay } from '../../site';
-import { getEvents, titleOf, eventLinks } from '../../content';
+import { getEvents, titleOf, eventLinks, fileUrl, people } from '../../content';
 
 export async function getStaticPaths() {
   const { upcoming, past } = await getEvents();
@@ -10,7 +10,11 @@ export async function getStaticPaths() {
 }
 
 const { event } = Astro.props;
-const { kind, date, location, summary, speaker } = event.data;
+const { kind, date, location, summary } = event.data;
+const names = [...new Set([...event.data.speakers, ...event.data.speaker])];
+const speaker = people(names);
+const slides = fileUrl(event.data.slides);
+const slidesPdf = slides?.startsWith('/files/') && /\.pdf$/i.test(slides) ? url(slides) : undefined;
 const title = titleOf(event);
 const time = formatTime(date);
 const links = eventLinks(event);
@@ -30,7 +34,7 @@ const { Content } = await render(event);
       <dd><time datetime={isoDay(date)}>{formatDay(date)}{time && `, ${time}`}</time></dd>
       {location && <dt class="label">Where</dt>}
       {location && <dd>{location}</dd>}
-      {speaker && <dt class="label">Speaker</dt>}
+      {speaker && <dt class="label">{names.length > 1 ? 'Speakers' : 'Speaker'}</dt>}
       {speaker && <dd>{speaker}</dd>}
       {links.length > 0 && <dt class="label">Materials</dt>}
       {
@@ -42,7 +46,17 @@ const { Content } = await render(event);
       }
     </dl>
 
-    <div class="prose body"><Content /></div>
+    <div class="prose body">
+      <Content />
+      {
+        slidesPdf && (
+          <span class="pdf-embed">
+            <iframe src={slidesPdf} title="Slides" loading="lazy" />
+            <a href={slidesPdf}>Open slides</a>
+          </span>
+        )
+      }
+    </div>
 
     <a class="back" href={url('/events/')}>All events</a>
   </article>

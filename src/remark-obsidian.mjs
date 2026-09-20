@@ -1,5 +1,6 @@
 // Lets notes written in Obsidian render on the site as they look in Obsidian:
 //   ![[figure.png]] and ![[figure.png|alt text]]  image embeds from content/attachments/
+//   ![[deck.pdf]]                                  a PDF viewer; [[deck.pdf]] and other files become links
 //   [[Some note]] and [[Some note|label]]          links to the event, post, or page with that file name
 //   > [!note] Title                                callouts
 //   %%private comment%%                            removed
@@ -12,6 +13,8 @@ const IMAGE = /\.(png|jpe?g|gif|webp|avif|svg)$/i;
 const TOKEN = /(!?)\[\[([^\]|]+?)(?:\|([^\]]*))?\]\]/g;
 const ROUTES = { events: '/events/', posts: '/blog/' };
 const PAGES = { home: '/', about: '/about/', join: '/join/', events: '/events/', blog: '/blog/', materials: '/materials/', announcements: '/announcements/' };
+
+const escapeHtml = (value) => value.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
 const slug = (name) => new GithubSlugger().slug(name);
 
@@ -56,6 +59,20 @@ export default function remarkObsidian({ contentDir = 'content', base = '/' } = 
           // Obsidian uses the part after | for a pixel width; only keep it when it is real alt text.
           const alt = label && !/^\d+(x\d+)?$/.test(label) ? label : '';
           out.push({ type: 'image', url, alt, title: null });
+        } else if (fs.existsSync(path.join(root, 'attachments', path.basename(target))) && path.extname(target)) {
+          // Any other attachment is published under /files/ (see src/pages/files/[file].ts).
+          const name = path.basename(target);
+          const href = `${prefix}/files/${encodeURIComponent(name)}`;
+          const link = { type: 'link', url: href, title: null, children: [{ type: 'text', value: label || name }] };
+          if (bang && /\.pdf$/i.test(name)) {
+            out.push(
+              { type: 'html', value: `<span class="pdf-embed"><iframe src="${href}" title="${escapeHtml(label || name)}" loading="lazy"></iframe>` },
+              link,
+              { type: 'html', value: '</span>' },
+            );
+          } else {
+            out.push(link);
+          }
         } else {
           const text = label || path.basename(target);
           const url = urls.get(slug(path.basename(target).replace(/\.md$/, '')));

@@ -9,6 +9,16 @@ const text = z
   .nullish()
   .transform((value) => (value == null || String(value).trim() === '' ? undefined : String(value).trim()));
 
+// One name or a list of names. Obsidian writes a list property as a YAML list.
+const names = z
+  .union([z.string(), z.array(z.union([z.string(), z.number()]).nullish())])
+  .nullish()
+  .transform((value) =>
+    (Array.isArray(value) ? value : [value])
+      .map((name) => (name == null ? '' : String(name).trim()))
+      .filter((name) => name !== ''),
+  );
+
 const flag = z
   .boolean()
   .nullish()
@@ -36,7 +46,8 @@ const events = defineCollection({
     date: wallClock,
     kind: text,
     location: text,
-    speaker: text,
+    speakers: names,
+    speaker: names,
     summary: text,
     // A file name in content/attachments/ (a wikilink works too), or a full URL.
     slides: text,
@@ -54,7 +65,8 @@ const posts = defineCollection({
   schema: z.object({
     title: text,
     date: wallClock,
-    author: text,
+    authors: names,
+    author: names,
     summary: text,
     draft: flag,
   }),

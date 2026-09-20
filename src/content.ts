@@ -1,4 +1,6 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import fs from 'node:fs';
+import path from 'node:path';
 import { isoDay, today } from './site';
 
 type Name = 'events' | 'posts' | 'announcements';
@@ -62,21 +64,29 @@ export async function getAnnouncements() {
   return load('announcements');
 }
 
-// Files in the vault's attachments folder that an event can point to as slides.
-const attachments = import.meta.glob<string>('/content/attachments/*.{pdf,pptx,ppt,key,odp,zip,ipynb}', {
-  query: '?url&no-inline',
-  import: 'default',
-  eager: true,
-});
+const attachmentsDir = path.resolve('content/attachments');
 
-/** Turn a `slides` property (URL, file name, or [[wikilink]]) into a link target. */
+/**
+ * Turn a `slides` property (URL, file name, or [[wikilink]]) into a link target.
+ * Files in content/attachments/ are published under /files/ (see src/pages/files/[file].ts).
+ */
 export function fileUrl(value: string | undefined): string | undefined {
   if (!value) return undefined;
   const name = value.replace(/^!?\[\[|\]\]$/g, '').split('|')[0].trim();
   if (/^https?:/i.test(name)) return name;
-  const wanted = name.split('/').pop();
-  const hit = Object.entries(attachments).find(([file]) => file.split('/').pop() === wanted);
-  return hit?.[1];
+  const file = path.basename(name);
+  if (!fs.existsSync(path.join(attachmentsDir, file))) {
+    console.warn(`[content] "${file}" is not in content/attachments/, so its link was left out`);
+    return undefined;
+  }
+  return `/files/${encodeURIComponent(file)}`;
+}
+
+/** "A", "A and B", "A, B, and C" */
+export function people(...lists: string[][]): string {
+  const all = [...new Set(lists.flat())];
+  if (all.length <= 2) return all.join(' and ');
+  return `${all.slice(0, -1).join(', ')}, and ${all.at(-1)}`;
 }
 
 /** Parse "Label: https://..." (or a bare URL) from an event's `links` property. */

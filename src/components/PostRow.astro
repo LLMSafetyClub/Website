@@ -1,13 +1,14 @@
 ---
 import { url, formatDay, isoDay } from '../site';
-import { titleOf, type Dated } from '../content';
+import { titleOf, people, type Dated } from '../content';
 
 interface Props {
   post: Dated<'posts'>;
 }
 
 const { post } = Astro.props;
-const { date, author, summary } = post.data;
+const { date, summary } = post.data;
+const author = people(post.data.authors, post.data.author);
 ---
 
 <li class="row">
