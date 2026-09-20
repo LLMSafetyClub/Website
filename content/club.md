@@ -5,7 +5,7 @@ school: Georgia State University
 description:
 email:
 meeting:
-discord:
+discord: https://discord.gg/TcDecpGkNx
 mailing list:
 pin:
 github: https://github.com/LLMSafetyClub
