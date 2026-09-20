@@ -2,7 +2,9 @@
 date: 2026-10-01T13:00
 kind: meeting
 location:
-speaker: Iraj Moradi
+speakers:
+  - Iraj Moradi
+  - Lance Santiago
 summary:
 slides:
 links:
