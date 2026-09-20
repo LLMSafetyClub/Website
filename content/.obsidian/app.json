@@ -4,5 +4,7 @@
   "attachmentFolderPath": "attachments",
   "newFileLocation": "current",
   "propertiesInDocument": "visible",
-  "userIgnoreFilters": ["_templates/"]
+  "userIgnoreFilters": [
+    "_templates/"
+  ]
 }

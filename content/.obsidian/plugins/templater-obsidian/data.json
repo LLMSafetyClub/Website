@@ -9,14 +9,24 @@
   "shell_path": "",
   "user_scripts_folder": "",
   "folder_templates": [
-    { "folder": "events", "template": "_templates/Event.md" },
-    { "folder": "posts", "template": "_templates/Post.md" },
-    { "folder": "announcements", "template": "_templates/Announcement.md" }
+    {
+      "folder": "events",
+      "template": "_templates/Event.md"
+    },
+    {
+      "folder": "posts",
+      "template": "_templates/Post.md"
+    },
+    {
+      "folder": "announcements",
+      "template": "_templates/Announcement.md"
+    }
   ],
   "file_templates": [],
   "syntax_highlighting": true,
   "syntax_highlighting_mobile": false,
   "enabled_templates_hotkeys": [],
   "startup_templates": [],
+  "intellisense_render": "1",
   "ignore_folders_on_creation": []
 }
