@@ -46,6 +46,8 @@ leaves the page with only its heading:
 
 - `date`: Atlanta time, no time zone needed. Use the date picker, or type `2026-10-15T17:30`.
   A note whose date is missing or unreadable is left off the site.
+- `end` (events): when the event is over, written like `date`. The event moves from Upcoming to
+  Past at that time. Left empty, it moves at the end of its day.
 - `kind`: any word, such as meeting, workshop, talk, reading group.
 - `speakers` (events) and `authors` (posts): a list, one name per line. A single `speaker` or
   `author` still works.
@@ -56,7 +58,8 @@ leaves the page with only its heading:
 - `draft`: tick it to keep a note off the live site. Drafts still show in `npm run dev`.
 - Any property can be left empty.
 
-Events move from Upcoming to Past on their own, because the site rebuilds every morning.
+Events move from Upcoming to Past on their own: the page checks the time when it loads, and the
+site rebuilds every morning.
 
 ### Obsidian syntax that works on the site
 

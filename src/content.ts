@@ -1,7 +1,7 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import fs from 'node:fs';
 import path from 'node:path';
-import { isoDay, today } from './site';
+import { wallClockNow } from './site';
 
 type Name = 'events' | 'posts' | 'announcements';
 /** An entry whose date was readable. Everything the pages receive is one of these. */
@@ -47,12 +47,22 @@ export async function getPage(id: string) {
   return getEntry('pages', id);
 }
 
-/** Events split around today (Atlanta time). An event stays upcoming through its own day. */
+/** When an event is over: its `end` property if it has one, otherwise the end of its own day. */
+export function endOf(event: Dated<'events'>): Date {
+  const { date, end } = event.data;
+  if (end && end > date) return end;
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1));
+}
+
+/**
+ * Events split around now (Atlanta time). This is only as fresh as the last build, so
+ * EventRow.astro moves events that have ended since then when the page loads.
+ */
 export async function getEvents() {
   const events = await load('events');
-  const now = today();
-  const upcoming = events.filter((event) => isoDay(event.data.date) >= now).reverse();
-  const past = events.filter((event) => isoDay(event.data.date) < now);
+  const now = wallClockNow();
+  const upcoming = events.filter((event) => endOf(event) > now).reverse();
+  const past = events.filter((event) => endOf(event) <= now);
   return { upcoming, past };
 }
 

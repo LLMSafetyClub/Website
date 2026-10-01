@@ -31,15 +31,8 @@ const announcements = await getAnnouncements();
         <h2 id="upcoming">Upcoming events</h2>
         <a href={url('/events/')}>All events</a>
       </div>
-      {
-        upcoming.length > 0 ? (
-          <ul class="rows">
-            {upcoming.slice(0, 3).map((event) => <EventRow event={event} />)}
-          </ul>
-        ) : (
-          <p class="empty">No upcoming events.</p>
-        )
-      }
+      <ul class="rows next-three" data-upcoming>{upcoming.map((event) => <EventRow event={event} />)}</ul>
+      <p class="empty" data-upcoming-empty hidden={upcoming.length > 0}>No upcoming events.</p>
     </section>
 
     {
@@ -84,6 +77,11 @@ const announcements = await getAnnouncements();
     letter-spacing: -0.035em;
     line-height: 1.05;
     max-width: 14ch;
+  }
+
+  /* Every upcoming event is in the list, so the next one can step in when one ends. */
+  .next-three :global(.row ~ .row ~ .row ~ .row) {
+    display: none;
   }
 
   .intro {

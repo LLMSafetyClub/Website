@@ -37,7 +37,17 @@ export function isoDay(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-/** Today's date in Atlanta, as 2026-10-15. */
-export function today(): string {
-  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+/** The current Atlanta wall-clock time, held in UTC fields like the content dates. */
+export function wallClockNow(): Date {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).formatToParts(new Date());
+  const get = (type: string) => Number(parts.find((part) => part.type === type)?.value);
+  return new Date(Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute')));
 }

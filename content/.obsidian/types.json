@@ -1,6 +1,7 @@
 {
   "types": {
     "date": "datetime",
+    "end": "datetime",
     "draft": "checkbox",
     "links": "multitext",
     "speakers": "multitext",

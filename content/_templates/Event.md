@@ -8,6 +8,7 @@ const kind = await tp.system.suggester(kinds, kinds);
 -%>
 ---
 date: <% when ?? "" %>
+end:
 kind: <% kind ?? "" %>
 location:
 speakers:

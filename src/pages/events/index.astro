@@ -16,25 +16,16 @@ const { upcoming, past } = await getEvents();
       <div class="section-head">
         <h2 id="upcoming">Upcoming</h2>
       </div>
-      {
-        upcoming.length > 0 ? (
-          <ul class="rows">{upcoming.map((event) => <EventRow event={event} />)}</ul>
-        ) : (
-          <p class="empty">No upcoming events.</p>
-        )
-      }
+      <ul class="rows" data-upcoming>{upcoming.map((event) => <EventRow event={event} />)}</ul>
+      <p class="empty" data-upcoming-empty hidden={upcoming.length > 0}>No upcoming events.</p>
     </section>
 
-    {
-      past.length > 0 && (
-        <section class="section" aria-labelledby="past">
-          <div class="section-head">
-            <h2 id="past">Past</h2>
-            <a href={url('/materials/')}>Materials</a>
-          </div>
-          <ul class="rows">{past.map((event) => <EventRow event={event} />)}</ul>
-        </section>
-      )
-    }
+    <section class="section" aria-labelledby="past" hidden={past.length === 0}>
+      <div class="section-head">
+        <h2 id="past">Past</h2>
+        <a href={url('/materials/')}>Materials</a>
+      </div>
+      <ul class="rows" data-past>{past.map((event) => <EventRow event={event} />)}</ul>
+    </section>
   </div>
 </Base>

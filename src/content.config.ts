@@ -44,6 +44,8 @@ const events = defineCollection({
   schema: z.object({
     title: text,
     date: wallClock,
+    // When the event is over and moves to Past. Without it, that is the end of its day.
+    end: wallClock,
     kind: text,
     location: text,
     speakers: names,

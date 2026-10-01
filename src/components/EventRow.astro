@@ -1,6 +1,6 @@
 ---
 import { url, formatDay, formatTime, isoDay } from '../site';
-import { titleOf, eventLinks, people, type Dated } from '../content';
+import { titleOf, eventLinks, people, endOf, type Dated } from '../content';
 
 interface Props {
   event: Dated<'events'>;
@@ -13,7 +13,7 @@ const where = [location, people(speakers, speaker)].filter(Boolean).join(', ');
 const links = eventLinks(event);
 ---
 
-<li class="row">
+<li class="row" data-ends={endOf(event).toISOString()}>
   <div class="row-when">
     <time class="label" datetime={isoDay(date)}>{formatDay(date)}</time>
     {time && <span class="label">{time}</span>}
@@ -32,3 +32,26 @@ const links = eventLinks(event);
     }
   </div>
 </li>
+
+<script>
+  // The site is only rebuilt on publish and each morning. On load, rows in a
+  // [data-upcoming] list whose event has ended since then move to the [data-past]
+  // list, or are dropped on pages without one.
+  import { wallClockNow } from '../site';
+
+  const now = wallClockNow();
+  const past = document.querySelector('[data-past]');
+  for (const list of document.querySelectorAll('[data-upcoming]')) {
+    // Soonest first here and newest first in the past list, so prepending keeps the order.
+    for (const row of list.querySelectorAll<HTMLElement>(':scope > [data-ends]')) {
+      if (new Date(row.dataset.ends!) > now) continue;
+      if (past) past.prepend(row);
+      else row.remove();
+    }
+    const empty = list.parentElement?.querySelector<HTMLElement>('[data-upcoming-empty]');
+    // Count rows, not children: Astro places this script inside the first list.
+    if (empty) empty.hidden = list.querySelector(':scope > [data-ends]') !== null;
+  }
+  const pastSection = past?.closest('section');
+  if (past && pastSection) pastSection.hidden = past.querySelector(':scope > [data-ends]') === null;
+</script>
