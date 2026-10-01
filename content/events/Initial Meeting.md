@@ -10,6 +10,7 @@ slides: "[[nwe_thing.pdf|slides]]"
 links:
   - https://youtu.be/H82QZ-fnnHY
 draft: false
+end: 2026-10-01T14:00:00
 ---
 
 
