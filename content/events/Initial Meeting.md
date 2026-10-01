@@ -6,8 +6,9 @@ speakers:
   - Iraj Moradi
   - Lance Santiago
 summary:
-slides:
+slides: "[[nwe_thing.pdf|slides]]"
 links:
+  - https://youtu.be/H82QZ-fnnHY
 draft: false
 ---
 
